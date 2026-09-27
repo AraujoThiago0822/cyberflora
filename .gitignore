@@ -1,0 +1,24 @@
+﻿# Kotlin / Gradle
+.gradle/
+build/
+out/
+*.class
+
+# IDE
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.iml
+
+# Env / secrets
+.env
+*.env.local
+secrets.h
+firebase-service-account.json
+
+# Windows
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log

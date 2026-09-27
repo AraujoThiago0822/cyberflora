@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: cyberflora-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: cyberflora
+      POSTGRES_USER: cyberflora_user
+      POSTGRES_PASSWORD: cyberflora_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - cyberflora_pg_data:/var/lib/postgresql/data
+
+volumes:
+  cyberflora_pg_data:
