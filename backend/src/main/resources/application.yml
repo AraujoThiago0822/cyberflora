@@ -19,6 +19,6 @@ spring:
 server:
   port: 8080
 
-  jwt:
+jwt:
   secret: "cyberflora-super-secret-key-para-desenvolvimento-troque-em-producao-1234567890"
   expiration-ms: 7200000
