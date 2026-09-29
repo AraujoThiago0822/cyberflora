@@ -1,0 +1,6 @@
+﻿{
+    "description":  "Estufa principal, voltada para hortaliças",
+    "name":  "Estufa 1",
+    "irrigationAutomatic":  true,
+    "capacityM2":  12.5
+}
