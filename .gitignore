@@ -22,3 +22,8 @@ desktop.ini
 
 # Logs
 *.log
+
+# Kotlin Multiplatform
+frontend-kmp/**/build/
+frontend-kmp/.gradle/
+frontend-kmp/.kotlin/
