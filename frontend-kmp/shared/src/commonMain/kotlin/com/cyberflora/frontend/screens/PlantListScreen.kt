@@ -1,17 +1,21 @@
 package com.cyberflora.frontend.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.LocalFlorist
+import androidx.compose.material.icons.filled.WaterDrop
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -26,30 +30,22 @@ import com.cyberflora.frontend.viewmodel.PlantViewModel
 
 @Composable
 fun PlantListScreen(viewModel: PlantViewModel, onAddNew: () -> Unit, onEditItem: (Long) -> Unit) {
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text("Minhas Plantas", color = TextPrimary, fontSize = 22.sp, fontWeight = FontWeight.Bold)
-            Button(
-                onClick = onAddNew,
-                colors = ButtonDefaults.buttonColors(containerColor = GreenPrimary),
-                shape = RoundedCornerShape(10.dp)
-            ) {
-                Icon(Icons.Default.Add, contentDescription = null)
-                Spacer(Modifier.width(4.dp))
-                Text("Nova Planta")
-            }
-        }
-        Spacer(Modifier.height(16.dp))
+    Column(modifier = Modifier.fillMaxSize().padding(20.dp)) {
+        CrudScreenHeader(
+            icon = Icons.Default.LocalFlorist,
+            title = "Minhas Plantas",
+            actionLabel = "Nova Planta",
+            onAction = onAddNew
+        )
+        Spacer(Modifier.height(20.dp))
 
         when {
             viewModel.isLoading -> Box(Modifier.fillMaxWidth().padding(32.dp), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator(color = NeonPrimary)
             }
-            viewModel.plants.isEmpty() -> Text("Nenhuma planta cadastrada ainda.", color = GraySecondaryText)
+            viewModel.plants.isEmpty() -> Box(Modifier.fillMaxWidth().padding(32.dp), contentAlignment = Alignment.Center) {
+                Text("Nenhuma planta cadastrada ainda.", color = GraySecondaryText)
+            }
             else -> LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 items(viewModel.plants, key = { it.id }) { plant ->
                     PlantCard(plant = plant, onEdit = { onEditItem(plant.id) }, onDelete = { viewModel.delete(plant.id) })
@@ -66,20 +62,53 @@ private fun PlantCard(plant: PlantResponse, onEdit: () -> Unit, onDelete: () -> 
         shape = RoundedCornerShape(14.dp),
         modifier = Modifier.fillMaxWidth()
     ) {
-        Row(modifier = Modifier.fillMaxWidth().padding(14.dp), verticalAlignment = Alignment.CenterVertically) {
-            Column(modifier = Modifier.weight(1f)) {
-                Text(plant.name, color = TextPrimary, fontWeight = FontWeight.Bold, fontSize = 16.sp)
-                Text(plant.species, color = GraySecondaryText, fontSize = 13.sp)
-                Spacer(Modifier.height(4.dp))
-                Text("Umidade ideal: ${plant.minHumidity.toInt()}%–${plant.maxHumidity.toInt()}%", color = NeonPrimary, fontSize = 12.sp)
-                Text(
-                    if (plant.active) "Ativa" else "Inativa",
-                    color = if (plant.active) GreenPrimary else ErrorColor,
-                    fontSize = 11.sp
-                )
+        Row(modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min)) {
+            Box(
+                modifier = Modifier
+                    .width(4.dp)
+                    .fillMaxHeight()
+                    .background(if (plant.active) GreenPrimary else GraySecondaryText)
+            )
+            Row(
+                modifier = Modifier.weight(1f).padding(14.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(plant.name, color = TextPrimary, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                        Spacer(Modifier.width(6.dp))
+                        Box(
+                            modifier = Modifier
+                                .size(8.dp)
+                                .clip(CircleShape)
+                                .background(if (plant.active) GreenPrimary else GraySecondaryText)
+                        )
+                    }
+                    Text(plant.species, color = GraySecondaryText, fontSize = 13.sp)
+                    Spacer(Modifier.height(4.dp))
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(Icons.Default.WaterDrop, contentDescription = null, tint = NeonPrimary, modifier = Modifier.size(14.dp))
+                        Spacer(Modifier.width(4.dp))
+                        Text("${plant.minHumidity.toInt()}%–${plant.maxHumidity.toInt()}%", color = NeonPrimary, fontSize = 12.sp)
+                    }
+                }
+                Spacer(Modifier.width(8.dp))
+                FilledTonalIconButton(
+                    onClick = onEdit,
+                    colors = IconButtonDefaults.filledTonalIconButtonColors(
+                        containerColor = NeonPrimary.copy(alpha = 0.15f),
+                        contentColor = NeonPrimary
+                    )
+                ) { Icon(Icons.Default.Edit, contentDescription = "Editar") }
+                Spacer(Modifier.width(6.dp))
+                FilledTonalIconButton(
+                    onClick = onDelete,
+                    colors = IconButtonDefaults.filledTonalIconButtonColors(
+                        containerColor = ErrorColor.copy(alpha = 0.15f),
+                        contentColor = ErrorColor
+                    )
+                ) { Icon(Icons.Default.Delete, contentDescription = "Apagar") }
             }
-            IconButton(onClick = onEdit) { Icon(Icons.Default.Edit, contentDescription = "Editar", tint = NeonPrimary) }
-            IconButton(onClick = onDelete) { Icon(Icons.Default.Delete, contentDescription = "Apagar", tint = ErrorColor) }
         }
     }
 }

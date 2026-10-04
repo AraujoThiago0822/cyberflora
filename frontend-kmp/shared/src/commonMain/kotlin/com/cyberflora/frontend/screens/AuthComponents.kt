@@ -4,19 +4,26 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Eco
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cyberflora.frontend.theme.GraySecondaryText
+import com.cyberflora.frontend.theme.GreenPrimary
 import com.cyberflora.frontend.theme.NeonPrimary
 import com.cyberflora.frontend.theme.SurfaceSecondary
 import com.cyberflora.frontend.theme.TextPrimary
@@ -52,3 +59,27 @@ fun cyberFloraFieldColors() = OutlinedTextFieldDefaults.colors(
     focusedContainerColor = SurfaceSecondary,
     unfocusedContainerColor = SurfaceSecondary
 )
+
+@Composable
+fun CrudScreenHeader(icon: ImageVector, title: String, actionLabel: String, onAction: () -> Unit) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(icon, contentDescription = null, tint = NeonPrimary, modifier = Modifier.size(26.dp))
+            Spacer(Modifier.width(10.dp))
+            Text(title, color = TextPrimary, fontSize = 22.sp, fontWeight = FontWeight.Bold)
+        }
+        Button(
+            onClick = onAction,
+            colors = ButtonDefaults.buttonColors(containerColor = GreenPrimary),
+            shape = RoundedCornerShape(10.dp)
+        ) {
+            Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(18.dp))
+            Spacer(Modifier.width(6.dp))
+            Text(actionLabel, fontWeight = FontWeight.SemiBold)
+        }
+    }
+}
