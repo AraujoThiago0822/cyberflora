@@ -7,7 +7,7 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import androidx.savedstate.serialization.SavedStateConfiguration
-import com.cyberflora.frontend.screens.LoginPlaceholder
+import com.cyberflora.frontend.screens.LoginScreen
 import com.cyberflora.frontend.screens.RegisterPlaceholder
 import com.cyberflora.frontend.screens.SplashScreen
 import kotlinx.serialization.modules.SerializersModule
@@ -39,14 +39,14 @@ fun AppNavigation() {
                 })
             }
             entry<RootDestination.Login> {
-                LoginPlaceholder(
-                    onLoginSuccess = {
-                        backStack.removeAt(backStack.lastIndex)
-                        backStack.add(RootDestination.Home)
-                    },
-                    onGoToRegister = { backStack.add(RootDestination.Register) }
-                )
-            }
+    LoginScreen(
+        onLoginSuccess = {
+            backStack.removeAt(backStack.lastIndex)
+            backStack.add(RootDestination.Home)
+        },
+        onGoToRegister = { backStack.add(RootDestination.Register) }
+    )
+}
             entry<RootDestination.Register> {
                 RegisterPlaceholder(
                     onBackToLogin = { backStack.removeAt(backStack.lastIndex) }

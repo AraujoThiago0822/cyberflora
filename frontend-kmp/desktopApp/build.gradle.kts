@@ -8,7 +8,7 @@ plugins {
 
 dependencies {
     implementation(project(":shared"))
-
+    implementation("io.ktor:ktor-client-okhttp:3.0.3")
     implementation(compose.desktop.currentOs)
     implementation(libs.kotlinx.coroutinesSwing)
 
