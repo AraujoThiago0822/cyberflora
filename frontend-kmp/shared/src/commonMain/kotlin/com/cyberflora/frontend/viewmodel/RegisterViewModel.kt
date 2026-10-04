@@ -9,6 +9,9 @@ import com.cyberflora.frontend.network.AuthRepository
 import com.cyberflora.frontend.network.SessionManager
 import kotlinx.coroutines.launch
 
+private val STRONG_PASSWORD_REGEX =
+    Regex("^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%^&*(),.?\":{}|<>_\\-+=]).{8,}$")
+
 class RegisterViewModel : ViewModel() {
     private val repository = AuthRepository()
 
@@ -22,6 +25,10 @@ class RegisterViewModel : ViewModel() {
         private set
 
     fun register(onSuccess: () -> Unit) {
+        if (!STRONG_PASSWORD_REGEX.matches(password)) {
+            errorMessage = "Senha fraca: use 8+ caracteres, 1 maiúscula, 1 número e 1 caractere especial"
+            return
+        }
         if (password != confirmPassword) {
             errorMessage = "As senhas não coincidem"
             return

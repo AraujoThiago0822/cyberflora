@@ -52,6 +52,7 @@ kotlin {
         commonMain.dependencies {
             implementation(libs.compose.runtime)
             implementation(libs.compose.foundation)
+            implementation("org.jetbrains.compose.material:material-icons-extended:1.7.3")
             implementation(libs.compose.material3)
             implementation(libs.compose.ui)
             implementation("io.ktor:ktor-client-core:3.0.3")
