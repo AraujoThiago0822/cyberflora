@@ -12,7 +12,7 @@ kotlin {
 }
 dependencies {
     implementation(project(":shared"))
-
+    implementation("io.ktor:ktor-client-okhttp:3.0.3")
     implementation(libs.androidx.activity.compose)
 
     implementation(libs.compose.uiToolingPreview)

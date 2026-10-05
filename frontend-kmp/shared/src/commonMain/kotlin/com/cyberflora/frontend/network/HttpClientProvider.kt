@@ -11,4 +11,4 @@ val httpClient = HttpClient {
     }
 }
 
-const val BASE_URL = "http://localhost:8080"
+val BASE_URL = apiBaseUrl()

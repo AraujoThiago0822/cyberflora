@@ -59,7 +59,7 @@ fun HomeNavigation() {
         Box(modifier = Modifier.weight(1f)) {
             when (currentSection) {
                 CrudSection.Plants -> PlantNavigation()
-                CrudSection.GrowingAreas -> CrudNavigation(title = "Áreas de Cultivo")
+                CrudSection.GrowingAreas -> GrowingAreaNavigation()
             }
         }
     }
