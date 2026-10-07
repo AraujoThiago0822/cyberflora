@@ -62,20 +62,18 @@ fun cyberFloraFieldColors() = OutlinedTextFieldDefaults.colors(
 
 @Composable
 fun CrudScreenHeader(icon: ImageVector, title: String, actionLabel: String, onAction: () -> Unit) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
+    Column(modifier = Modifier.fillMaxWidth()) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(icon, contentDescription = null, tint = NeonPrimary, modifier = Modifier.size(26.dp))
             Spacer(Modifier.width(10.dp))
             Text(title, color = TextPrimary, fontSize = 22.sp, fontWeight = FontWeight.Bold)
         }
+        Spacer(Modifier.height(14.dp))
         Button(
             onClick = onAction,
             colors = ButtonDefaults.buttonColors(containerColor = GreenPrimary),
-            shape = RoundedCornerShape(10.dp)
+            shape = RoundedCornerShape(12.dp),
+            modifier = Modifier.fillMaxWidth().height(48.dp)
         ) {
             Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(18.dp))
             Spacer(Modifier.width(6.dp))

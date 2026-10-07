@@ -28,8 +28,8 @@ fun PlantFormScreen(viewModel: PlantViewModel, onSaved: () -> Unit) {
         OutlinedTextField(viewModel.plantingDate, { viewModel.plantingDate = it }, label = { Text("Data de plantio (AAAA-MM-DD)") }, colors = cyberFloraFieldColors(), modifier = Modifier.fillMaxWidth())
         Spacer(Modifier.height(10.dp))
         Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-            OutlinedTextField(viewModel.minHumidity, { viewModel.minHumidity = it }, label = { Text("Umidade mín. (%)") }, colors = cyberFloraFieldColors(), modifier = Modifier.weight(1f))
-            OutlinedTextField(viewModel.maxHumidity, { viewModel.maxHumidity = it }, label = { Text("Umidade máx. (%)") }, colors = cyberFloraFieldColors(), modifier = Modifier.weight(1f))
+                        OutlinedTextField(viewModel.minHumidity, { viewModel.minHumidity = it }, label = { Text("Umid. mín (%)") }, colors = cyberFloraFieldColors(), modifier = Modifier.weight(1f))
+            OutlinedTextField(viewModel.maxHumidity, { viewModel.maxHumidity = it }, label = { Text("Umid. máx (%)") }, colors = cyberFloraFieldColors(), modifier = Modifier.weight(1f))
         }
         Spacer(Modifier.height(10.dp))
         Row(verticalAlignment = Alignment.CenterVertically) {
