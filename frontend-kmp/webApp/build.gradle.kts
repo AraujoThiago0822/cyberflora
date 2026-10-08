@@ -21,7 +21,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(project(":shared"))
-
+            implementation("io.ktor:ktor-client-js:3.0.3")
             implementation(libs.compose.ui)
         }
     }
