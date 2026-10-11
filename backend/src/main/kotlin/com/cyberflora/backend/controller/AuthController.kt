@@ -24,7 +24,7 @@ class AuthController(
     private val jwtUtil: JwtUtil
 ) {
 
-    @PostMapping("/register")
+    @PostMapping(value = ["/register", "/signup"])
     fun register(@Valid @RequestBody request: RegisterRequest): ResponseEntity<Any> {
         if (request.password != request.confirmPassword) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)

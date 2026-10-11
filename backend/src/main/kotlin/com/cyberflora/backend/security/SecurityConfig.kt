@@ -59,8 +59,8 @@ class SecurityConfig(
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .authorizeHttpRequests {
                 it.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                it.requestMatchers("/login", "/register").permitAll()
-                it.requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                it.requestMatchers("/login", "/register", "/signin", "/signup").permitAll()
+                it.requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/error").permitAll()
                 it.anyRequest().authenticated()
             }
             .authenticationProvider(authenticationProvider())

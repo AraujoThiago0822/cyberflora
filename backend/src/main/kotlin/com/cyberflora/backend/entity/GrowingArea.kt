@@ -13,7 +13,7 @@ data class GrowingArea(
     val id: Long? = null,
 
     @field:NotBlank(message = "O nome da área é obrigatório")
-    @Column(nullable = false)
+    @Column(nullable = false, length = 100)
     val name: String = "",
 
     @Column(length = 500)
@@ -27,5 +27,9 @@ data class GrowingArea(
     val irrigationAutomatic: Boolean = true,
 
     @Column(name = "created_at")
-    val createdAt: LocalDateTime = LocalDateTime.now()
+    val createdAt: LocalDateTime = LocalDateTime.now(),
+
+    @ManyToOne
+    @JoinColumn(name = "owner_id")
+    val owner: User? = null
 )

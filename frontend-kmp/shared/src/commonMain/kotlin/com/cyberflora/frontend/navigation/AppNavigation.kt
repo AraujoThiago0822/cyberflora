@@ -7,11 +7,13 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import androidx.savedstate.serialization.SavedStateConfiguration
+import com.cyberflora.frontend.network.SessionManager
 import com.cyberflora.frontend.screens.LoginScreen
 import com.cyberflora.frontend.screens.RegisterScreen
 import com.cyberflora.frontend.screens.SplashScreen
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
+import kotlinx.serialization.modules.subclass
 
 private val rootConfig = SavedStateConfiguration {
     serializersModule = SerializersModule {
@@ -49,15 +51,19 @@ fun AppNavigation() {
             entry<RootDestination.Register> {
                 RegisterScreen(
                     onRegisterSuccess = {
-                        backStack.removeAt(backStack.lastIndex) // tira Register
-                        backStack.removeAt(backStack.lastIndex) // tira Login
+                        backStack.removeAt(backStack.lastIndex)
+                        backStack.removeAt(backStack.lastIndex)
                         backStack.add(RootDestination.Home)
                     },
                     onBackToLogin = { backStack.removeAt(backStack.lastIndex) }
                 )
             }
             entry<RootDestination.Home> {
-                HomeNavigation()
+                HomeNavigation(onLogout = {
+                    SessionManager.clear()
+                    backStack.clear()
+                    backStack.add(RootDestination.Login)
+                })
             }
         }
     )

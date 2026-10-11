@@ -14,17 +14,17 @@ data class User(
     val id: Long? = null,
 
     @field:NotBlank(message = "O nome é obrigatório")
-    @Column(nullable = false)
+    @Column(nullable = false, length = 100)
     val name: String = "",
 
     @field:NotBlank(message = "O e-mail é obrigatório")
     @field:Email(message = "E-mail inválido")
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, unique = true, length = 150)
     val email: String = "",
 
     @field:NotBlank(message = "A senha é obrigatória")
     @field:Size(min = 6, message = "A senha deve ter no mínimo 6 caracteres")
-    @Column(nullable = false)
+    @Column(nullable = false, length = 100)
     val password: String = "",
 
     @Column(name = "created_at")

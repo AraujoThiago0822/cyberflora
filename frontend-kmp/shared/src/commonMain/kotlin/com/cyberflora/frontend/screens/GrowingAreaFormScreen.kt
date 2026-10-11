@@ -52,7 +52,7 @@ fun GrowingAreaFormScreen(viewModel: GrowingAreaViewModel, onSaved: () -> Unit) 
 
         Spacer(Modifier.height(20.dp))
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            OutlinedButton(onClick = { viewModel.clearForm() }, modifier = Modifier.weight(1f)) { Text("Limpar") }
+            OutlinedButton(onClick = { viewModel.clearForm() }, modifier = Modifier.weight(1f)) { Text("Limpar Campos") }
             Button(
                 onClick = { viewModel.save(onSaved = onSaved) },
                 colors = ButtonDefaults.buttonColors(containerColor = GreenPrimary),

@@ -27,3 +27,10 @@ desktop.ini
 frontend-kmp/**/build/
 frontend-kmp/.gradle/
 frontend-kmp/.kotlin/
+/area.json
+/plant.json
+/plant2.json
+local.properties
+build_log.txt
+run_log.txt
+docs/log-*.txt

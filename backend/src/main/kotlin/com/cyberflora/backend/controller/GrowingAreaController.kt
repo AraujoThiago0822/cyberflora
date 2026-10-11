@@ -1,55 +1,35 @@
 package com.cyberflora.backend.controller
 
 import com.cyberflora.backend.dto.GrowingAreaRequest
-import com.cyberflora.backend.dto.GrowingAreaResponse
 import com.cyberflora.backend.service.GrowingAreaService
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
+import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/growing-areas")
-class GrowingAreaController(
-    private val growingAreaService: GrowingAreaService
-) {
+class GrowingAreaController(private val growingAreaService: GrowingAreaService) {
 
     @GetMapping
-    fun listAll(): ResponseEntity<List<GrowingAreaResponse>> {
-        return ResponseEntity.ok(growingAreaService.listAll())
-    }
+    fun listAll(auth: Authentication) = growingAreaService.listAll(auth.name)
+
+    @GetMapping("/search")
+    fun search(@RequestParam name: String, auth: Authentication) = growingAreaService.search(name, auth.name)
 
     @GetMapping("/{id}")
-    fun findById(@PathVariable id: Long): ResponseEntity<Any> {
-        return try {
-            ResponseEntity.ok(growingAreaService.findById(id))
-        } catch (e: NoSuchElementException) {
-            ResponseEntity.status(HttpStatus.NOT_FOUND).body(mapOf("error" to e.message))
-        }
-    }
+    fun findById(@PathVariable id: Long, auth: Authentication) = growingAreaService.findById(id, auth.name)
 
     @PostMapping
-    fun create(@Valid @RequestBody request: GrowingAreaRequest): ResponseEntity<GrowingAreaResponse> {
-        val created = growingAreaService.create(request)
-        return ResponseEntity.status(HttpStatus.CREATED).body(created)
-    }
+    @ResponseStatus(HttpStatus.CREATED)
+    fun create(@Valid @RequestBody request: GrowingAreaRequest, auth: Authentication) =
+        growingAreaService.create(request, auth.name)
 
     @PutMapping("/{id}")
-    fun update(@PathVariable id: Long, @Valid @RequestBody request: GrowingAreaRequest): ResponseEntity<Any> {
-        return try {
-            ResponseEntity.ok(growingAreaService.update(id, request))
-        } catch (e: NoSuchElementException) {
-            ResponseEntity.status(HttpStatus.NOT_FOUND).body(mapOf("error" to e.message))
-        }
-    }
+    fun update(@PathVariable id: Long, @Valid @RequestBody request: GrowingAreaRequest, auth: Authentication) =
+        growingAreaService.update(id, request, auth.name)
 
     @DeleteMapping("/{id}")
-    fun delete(@PathVariable id: Long): ResponseEntity<Any> {
-        return try {
-            growingAreaService.delete(id)
-            ResponseEntity.noContent().build<Any>()
-        } catch (e: NoSuchElementException) {
-            ResponseEntity.status(HttpStatus.NOT_FOUND).body(mapOf("error" to e.message))
-        }
-    }
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    fun delete(@PathVariable id: Long, auth: Authentication) = growingAreaService.delete(id, auth.name)
 }

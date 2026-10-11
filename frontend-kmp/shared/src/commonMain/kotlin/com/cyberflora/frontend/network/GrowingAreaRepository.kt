@@ -13,12 +13,12 @@ class GrowingAreaRepository {
     }
 
     suspend fun listAll(): Result<List<GrowingAreaResponse>> = try {
-        val response: List<GrowingAreaResponse> = httpClient.get("$BASE_URL/growing-areas") { withAuth() }.body()
+        val response: List<GrowingAreaResponse> = httpClient.get("$BASE_URL/growing-areas") { withAuth() }.ensureSuccess().body()
         Result.success(response)
     } catch (e: Exception) { Result.failure(e) }
 
     suspend fun findById(id: Long): Result<GrowingAreaResponse> = try {
-        val response: GrowingAreaResponse = httpClient.get("$BASE_URL/growing-areas/$id") { withAuth() }.body()
+        val response: GrowingAreaResponse = httpClient.get("$BASE_URL/growing-areas/$id") { withAuth() }.ensureSuccess().body()
         Result.success(response)
     } catch (e: Exception) { Result.failure(e) }
 
@@ -27,7 +27,7 @@ class GrowingAreaRepository {
             withAuth()
             contentType(ContentType.Application.Json)
             setBody(request)
-        }.body()
+        }.ensureSuccess().body()
         Result.success(response)
     } catch (e: Exception) { Result.failure(e) }
 
@@ -36,12 +36,12 @@ class GrowingAreaRepository {
             withAuth()
             contentType(ContentType.Application.Json)
             setBody(request)
-        }.body()
+        }.ensureSuccess().body()
         Result.success(response)
     } catch (e: Exception) { Result.failure(e) }
 
     suspend fun delete(id: Long): Result<Unit> = try {
-        httpClient.delete("$BASE_URL/growing-areas/$id") { withAuth() }
+        httpClient.delete("$BASE_URL/growing-areas/$id") { withAuth() }.ensureSuccess()
         Result.success(Unit)
     } catch (e: Exception) { Result.failure(e) }
 }

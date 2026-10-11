@@ -13,11 +13,11 @@ data class Plant(
     val id: Long? = null,
 
     @field:NotBlank(message = "O nome da planta é obrigatório")
-    @Column(nullable = false)
+    @Column(nullable = false, length = 100)
     val name: String = "",
 
     @field:NotBlank(message = "A espécie é obrigatória")
-    @Column(nullable = false)
+    @Column(nullable = false, length = 150)
     val species: String = "",
 
     @Column(name = "planting_date")
@@ -32,5 +32,9 @@ data class Plant(
     val maxHumidity: Double = 0.0,
 
     @Column(nullable = false)
-    val active: Boolean = true
+    val active: Boolean = true,
+
+    @ManyToOne
+    @JoinColumn(name = "owner_id")
+    val owner: User? = null
 )

@@ -1,55 +1,35 @@
 package com.cyberflora.backend.controller
 
 import com.cyberflora.backend.dto.PlantRequest
-import com.cyberflora.backend.dto.PlantResponse
 import com.cyberflora.backend.service.PlantService
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
+import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/plants")
-class PlantController(
-    private val plantService: PlantService
-) {
+class PlantController(private val plantService: PlantService) {
 
     @GetMapping
-    fun listAll(): ResponseEntity<List<PlantResponse>> {
-        return ResponseEntity.ok(plantService.listAll())
-    }
+    fun listAll(auth: Authentication) = plantService.listAll(auth.name)
+
+    @GetMapping("/search")
+    fun search(@RequestParam name: String, auth: Authentication) = plantService.search(name, auth.name)
 
     @GetMapping("/{id}")
-    fun findById(@PathVariable id: Long): ResponseEntity<Any> {
-        return try {
-            ResponseEntity.ok(plantService.findById(id))
-        } catch (e: NoSuchElementException) {
-            ResponseEntity.status(HttpStatus.NOT_FOUND).body(mapOf("error" to e.message))
-        }
-    }
+    fun findById(@PathVariable id: Long, auth: Authentication) = plantService.findById(id, auth.name)
 
     @PostMapping
-    fun create(@Valid @RequestBody request: PlantRequest): ResponseEntity<PlantResponse> {
-        val created = plantService.create(request)
-        return ResponseEntity.status(HttpStatus.CREATED).body(created)
-    }
+    @ResponseStatus(HttpStatus.CREATED)
+    fun create(@Valid @RequestBody request: PlantRequest, auth: Authentication) =
+        plantService.create(request, auth.name)
 
     @PutMapping("/{id}")
-    fun update(@PathVariable id: Long, @Valid @RequestBody request: PlantRequest): ResponseEntity<Any> {
-        return try {
-            ResponseEntity.ok(plantService.update(id, request))
-        } catch (e: NoSuchElementException) {
-            ResponseEntity.status(HttpStatus.NOT_FOUND).body(mapOf("error" to e.message))
-        }
-    }
+    fun update(@PathVariable id: Long, @Valid @RequestBody request: PlantRequest, auth: Authentication) =
+        plantService.update(id, request, auth.name)
 
     @DeleteMapping("/{id}")
-    fun delete(@PathVariable id: Long): ResponseEntity<Any> {
-        return try {
-            plantService.delete(id)
-            ResponseEntity.noContent().build<Any>()
-        } catch (e: NoSuchElementException) {
-            ResponseEntity.status(HttpStatus.NOT_FOUND).body(mapOf("error" to e.message))
-        }
-    }
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    fun delete(@PathVariable id: Long, auth: Authentication) = plantService.delete(id, auth.name)
 }

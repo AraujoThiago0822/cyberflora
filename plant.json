@@ -1,8 +1,0 @@
-﻿{
-    "minHumidity":  50,
-    "name":  "Teste Curl",
-    "maxHumidity":  70,
-    "plantingDate":  "2026-09-01",
-    "active":  true,
-    "species":  "Testus plantus"
-}

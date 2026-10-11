@@ -73,7 +73,7 @@ class GrowingAreaViewModel : ViewModel() {
                     loadAll()
                     onSaved()
                 }
-                .onFailure { errorMessage = "Erro ao salvar a área de cultivo" }
+                .onFailure { errorMessage = com.cyberflora.frontend.network.userMessage(it) }
         }
     }
 

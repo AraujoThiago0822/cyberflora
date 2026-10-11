@@ -13,12 +13,12 @@ class PlantRepository {
     }
 
     suspend fun listAll(): Result<List<PlantResponse>> = try {
-        val response: List<PlantResponse> = httpClient.get("$BASE_URL/plants") { withAuth() }.body()
+        val response: List<PlantResponse> = httpClient.get("$BASE_URL/plants") { withAuth() }.ensureSuccess().body()
         Result.success(response)
     } catch (e: Exception) { Result.failure(e) }
 
     suspend fun findById(id: Long): Result<PlantResponse> = try {
-        val response: PlantResponse = httpClient.get("$BASE_URL/plants/$id") { withAuth() }.body()
+        val response: PlantResponse = httpClient.get("$BASE_URL/plants/$id") { withAuth() }.ensureSuccess().body()
         Result.success(response)
     } catch (e: Exception) { Result.failure(e) }
 
@@ -27,7 +27,7 @@ class PlantRepository {
             withAuth()
             contentType(ContentType.Application.Json)
             setBody(request)
-        }.body()
+        }.ensureSuccess().body()
         Result.success(response)
     } catch (e: Exception) { Result.failure(e) }
 
@@ -36,12 +36,12 @@ class PlantRepository {
             withAuth()
             contentType(ContentType.Application.Json)
             setBody(request)
-        }.body()
+        }.ensureSuccess().body()
         Result.success(response)
     } catch (e: Exception) { Result.failure(e) }
 
     suspend fun delete(id: Long): Result<Unit> = try {
-        httpClient.delete("$BASE_URL/plants/$id") { withAuth() }
+        httpClient.delete("$BASE_URL/plants/$id") { withAuth() }.ensureSuccess()
         Result.success(Unit)
     } catch (e: Exception) { Result.failure(e) }
 }
