@@ -11,13 +11,17 @@ import javax.crypto.SecretKey
 
 @Component
 class JwtUtil(
-    @Value("\${jwt.secret}") private val secret: String,
+    @Value("\${jwt.secret:}") secret: String,
     @Value("\${jwt.expiration-ms}") private val expirationMs: Long
 ) {
 
-    private val signingKey: SecretKey by lazy {
-        Keys.hmacShaKeyFor(secret.toByteArray())
-    }
+    private val signingKey: SecretKey =
+        if (secret.isBlank()) {
+            println("[CyberFlora] AVISO: JWT_SECRET vazio. Usando chave temporária (os logins expiram ao reiniciar o backend).")
+            Jwts.SIG.HS512.key().build()
+        } else {
+            Keys.hmacShaKeyFor(secret.toByteArray())
+        }
 
     fun generateToken(email: String): String {
         val now = Date()

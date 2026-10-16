@@ -2,7 +2,7 @@ package com.cyberflora.backend.dto
 
 import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.NotBlank
-import jakarta.validation.constraints.Size
+import jakarta.validation.constraints.Pattern
 
 data class RegisterRequest(
     @field:NotBlank(message = "O nome é obrigatório")
@@ -12,8 +12,10 @@ data class RegisterRequest(
     @field:Email(message = "E-mail inválido")
     val email: String,
 
-    @field:NotBlank(message = "A senha é obrigatória")
-    @field:Size(min = 6, message = "A senha deve ter no mínimo 6 caracteres")
+    @field:Pattern(
+        regexp = "^(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9]).{8,72}$",
+        message = "A senha deve ter de 8 a 72 caracteres, com 1 maiúscula, 1 número e 1 caractere especial"
+    )
     val password: String,
 
     @field:NotBlank(message = "A confirmação de senha é obrigatória")

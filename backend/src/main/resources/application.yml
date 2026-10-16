@@ -2,10 +2,15 @@ spring:
   application:
     name: cyberflora-backend
 
+  config:
+    import:
+      - "optional:file:../.env[.properties]"
+      - "optional:file:./.env[.properties]"
+
   datasource:
-    url: jdbc:postgresql://localhost:5432/cyberflora
-    username: cyberflora_user
-    password: cyberflora_pass
+    url: "jdbc:postgresql://127.0.0.1:5432/${POSTGRES_DB:cyberflora}"
+    username: "${POSTGRES_USER:cyberflora_user}"
+    password: "${POSTGRES_PASSWORD}"
     driver-class-name: org.postgresql.Driver
 
   jpa:
@@ -20,6 +25,5 @@ server:
   port: 8080
 
 jwt:
-  secret: "cyberflora-super-secret-key-para-desenvolvimento-troque-em-producao-1234567890"
+  secret: "${JWT_SECRET:}"
   expiration-ms: 7200000
- 
