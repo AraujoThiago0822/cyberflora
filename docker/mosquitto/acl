@@ -1,0 +1,20 @@
+# ACL do CyberFlora (privilegio minimo)
+# Topicos:
+#   cyberflora/<deviceId>/sensor/<tipo>   leituras   (dispositivo -> backend)
+#   cyberflora/<deviceId>/status          online/offline (dispositivo -> backend)
+#   cyberflora/<deviceId>/command/<alvo>  comandos   (backend -> dispositivo)
+
+# Backend (listener do Spring Boot): le tudo e envia comandos
+user cyberflora_backend
+topic read cyberflora/#
+topic write cyberflora/+/command/#
+
+# Ponte do Wokwi (Parte 4): so pode publicar leituras e status
+user ponte
+topic write cyberflora/+/sensor/+
+topic write cyberflora/+/status
+
+# Dispositivos: o nome de usuario e o proprio deviceId (%u)
+pattern write cyberflora/%u/sensor/#
+pattern write cyberflora/%u/status
+pattern read cyberflora/%u/command/#

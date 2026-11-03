@@ -10,5 +10,16 @@ services:
     volumes:
       - cyberflora_pg_data:/var/lib/postgresql/data
 
+  mosquitto:
+    image: eclipse-mosquitto:2.0.18
+    container_name: cyberflora-mosquitto
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:1883:1883"
+    volumes:
+      - ./mosquitto:/mosquitto/config:ro
+      - cyberflora_mqtt_data:/mosquitto/data
+
 volumes:
   cyberflora_pg_data:
+  cyberflora_mqtt_data:

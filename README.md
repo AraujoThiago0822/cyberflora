@@ -103,6 +103,7 @@ Os valores do modelo servem para rodar localmente. Para uso real, troque `POSTGR
 
 ### 6.4 Banco de dados (PostgreSQL via Docker)
 ```powershell
+powershell -ExecutionPolicy Bypass -File docker\mosquitto\setup-mosquitto.ps1
 cd docker
 docker compose up -d
 docker ps --format "{{.Names}} {{.Ports}}"
@@ -199,3 +200,26 @@ O script cria dois usuários e verifica CRUD, busca, validação e isolamento de
 
 - O alvo **Web** do Compose Multiplatform ainda é experimental. O funcionamento principal foi validado em Desktop, Android e Web.
 - O Gradle configura todos os módulos do frontend. Por isso, o plugin do Android pode exigir o Android SDK instalado (`ANDROID_HOME`, ou `sdk.dir` em `frontend-kmp/local.properties`), mesmo para rodar só o Desktop.
+## 11. Broker MQTT (Mosquitto)
+
+Base da integração IoT: o ESP32 publica as leituras dos sensores e o backend as assina.
+
+- **Credenciais:** o script `docker\mosquitto\setup-mosquitto.ps1` lê as senhas `MQTT_*_PASSWORD` do `.env` e gera `docker/mosquitto/passwd` (não versionado). Rode-o uma vez, depois de criar o `.env` e antes de `docker compose up -d` (passo 6.4).
+- **Acesso:** porta `1883`, somente em `127.0.0.1`. Conexões anônimas são recusadas.
+- **Usuários e permissões (ACL):** `cyberflora_backend` lê todos os tópicos e envia comandos. Cada dispositivo (usuário = `deviceId`, por exemplo `esp32-001`) só publica as próprias leituras e só recebe os próprios comandos. O usuário `ponte` só publica leituras e status.
+
+| Tópico | Sentido | Conteúdo |
+|---|---|---|
+| `cyberflora/{deviceId}/sensor/{tipo}` | dispositivo para backend | leitura, por exemplo `{"value": 68.0, "unit": "%"}` |
+| `cyberflora/{deviceId}/status` | dispositivo para backend | `online` ou `offline` |
+| `cyberflora/{deviceId}/command/{alvo}` | backend para dispositivo | comando, por exemplo `ON` |
+
+O `deviceId` e o tipo do sensor são lidos do tópico, que a ACL garante, nunca do conteúdo da mensagem. Tamanho máximo da mensagem: 4096 bytes.
+
+**Teste do broker** (com o Docker rodando):
+```powershell
+powershell -ExecutionPolicy Bypass -File docs\teste-mqtt.ps1
+```
+Todas as linhas devem sair em `PASS`.
+
+**Limitação:** o MQTT trafega sem TLS (porta 1883), o que só é aceitável porque a porta fica restrita ao `127.0.0.1`. Em produção, seria preciso TLS (porta 8883).
