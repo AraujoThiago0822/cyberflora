@@ -223,3 +223,23 @@ powershell -ExecutionPolicy Bypass -File docs\teste-mqtt.ps1
 Todas as linhas devem sair em `PASS`.
 
 **Limitação:** o MQTT trafega sem TLS (porta 1883), o que só é aceitável porque a porta fica restrita ao `127.0.0.1`. Em produção, seria preciso TLS (porta 8883).
+## 12. Leituras de sensores (IoT, backend)
+
+O backend assina `cyberflora/+/sensor/+` no broker MQTT (sessão persistente) e grava cada leitura na tabela `sensor_readings`.
+
+- O `deviceId` e o tipo do sensor são lidos do **tópico**, que a ACL do broker garante. O conteúdo da mensagem nunca define quem é o dispositivo.
+- Tipos aceitos e faixas válidas: `soil_moisture` (0–100 %), `air_humidity` (0–100 %), `temperature` (−40 a 85 °C), `luminosity` (0–200000 lx). Mensagens inválidas, de tipo desconhecido, com campos extras ou fora da faixa são descartadas e registradas no log.
+- Payload: `{"value": 68.0, "unit": "%"}` ou apenas o número. A unidade gravada é sempre a do tipo de sensor.
+- O listener assina em QoS 1. O ESP32 (biblioteca PubSubClient) publica em QoS 0, o que é suficiente para telemetria periódica.
+- Cada dispositivo é vinculado a **uma** área de cultivo (`deviceId` único). O usuário só consulta as leituras do dispositivo das suas áreas.
+
+| Método | Rota | Descrição |
+|---|---|---|
+| GET | `/growing-areas/{id}/readings?hours=24&type=soil_moisture` | Histórico (até 72 h, no máximo 500 pontos) |
+| GET | `/growing-areas/{id}/readings/latest` | Última leitura de cada tipo de sensor |
+
+**Testes:**
+- Unidade: `cd backend` e `.\gradlew.bat test --tests "*SensorReadingServiceTest"`
+- Integração (com broker e backend rodando): `powershell -ExecutionPolicy Bypass -File docs\teste-iot.ps1`
+
+**Limitações:** o MQTT trafega sem TLS (porta 1883, restrita ao `127.0.0.1`); a tabela de leituras não tem rotina de limpeza; quem descobre o `deviceId` de outra pessoa pode vinculá-lo antes dela, e um produto real exigiria provisionamento do dispositivo.

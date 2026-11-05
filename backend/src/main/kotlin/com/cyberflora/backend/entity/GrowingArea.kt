@@ -31,5 +31,8 @@ data class GrowingArea(
 
     @ManyToOne
     @JoinColumn(name = "owner_id")
-    val owner: User? = null
+    val owner: User? = null,
+
+    @Column(name = "device_id", length = 64, unique = true)
+    val deviceId: String? = null
 )

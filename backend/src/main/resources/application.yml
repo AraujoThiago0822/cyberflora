@@ -27,3 +27,10 @@ server:
 jwt:
   secret: "${JWT_SECRET:}"
   expiration-ms: 7200000
+mqtt:
+  enabled: "${MQTT_ENABLED:true}"
+  broker-url: "${MQTT_BROKER_URL:tcp://127.0.0.1:1883}"
+  username: "${MQTT_USERNAME:cyberflora_backend}"
+  password: "${MQTT_BACKEND_PASSWORD:}"
+  client-id: cyberflora-backend
+  topic: "cyberflora/+/sensor/+"

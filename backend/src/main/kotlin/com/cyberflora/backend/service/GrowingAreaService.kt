@@ -32,7 +32,9 @@ class GrowingAreaService(
 
     fun update(id: Long, request: GrowingAreaRequest, ownerEmail: String): GrowingAreaResponse {
         val existing = findOwned(id, ownerEmail)
-        val updated = growingAreaMapper.toEntity(request, findUser(ownerEmail), existing.id, existing.createdAt)
+        val mapped = growingAreaMapper.toEntity(request, findUser(ownerEmail), existing.id, existing.createdAt)
+        // deviceId ausente na requisição = manter o vínculo atual; "" = desvincular
+        val updated = if (request.deviceId == null) mapped.copy(deviceId = existing.deviceId) else mapped
         return growingAreaMapper.toResponse(growingAreaRepository.save(updated))
     }
 

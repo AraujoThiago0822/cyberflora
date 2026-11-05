@@ -22,7 +22,8 @@ class GrowingAreaMapper {
         capacityM2 = request.capacityM2,
         irrigationAutomatic = request.irrigationAutomatic,
         createdAt = createdAt,
-        owner = owner
+        owner = owner,
+        deviceId = request.deviceId?.trim()?.ifEmpty { null }
     )
 
     fun toResponse(entity: GrowingArea): GrowingAreaResponse = GrowingAreaResponse(
@@ -31,6 +32,7 @@ class GrowingAreaMapper {
         description = entity.description,
         capacityM2 = entity.capacityM2,
         irrigationAutomatic = entity.irrigationAutomatic,
-        createdAt = entity.createdAt
+        createdAt = entity.createdAt,
+        deviceId = entity.deviceId
     )
 }
