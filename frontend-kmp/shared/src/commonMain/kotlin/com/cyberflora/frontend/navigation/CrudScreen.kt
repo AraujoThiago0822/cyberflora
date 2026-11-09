@@ -7,4 +7,5 @@ import kotlinx.serialization.Serializable
 sealed interface CrudScreen : NavKey {
     @Serializable data object ListScreen : CrudScreen
     @Serializable data class FormScreen(val id: Long? = null) : CrudScreen
+    @Serializable data class HistoryScreen(val id: Long) : CrudScreen
 }

@@ -9,7 +9,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.WaterDrop
+import androidx.compose.material.icons.filled.Timeline
 import androidx.compose.material.icons.filled.Yard
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -20,15 +20,22 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cyberflora.frontend.model.GrowingAreaResponse
+import com.cyberflora.frontend.theme.ErrorColor
 import com.cyberflora.frontend.theme.GraySecondaryText
 import com.cyberflora.frontend.theme.GreenPrimary
 import com.cyberflora.frontend.theme.NeonPrimary
+import com.cyberflora.frontend.theme.PurpleTech
 import com.cyberflora.frontend.theme.SurfaceSecondary
 import com.cyberflora.frontend.theme.TextPrimary
 import com.cyberflora.frontend.viewmodel.GrowingAreaViewModel
 
 @Composable
-fun GrowingAreaListScreen(viewModel: GrowingAreaViewModel, onAddNew: () -> Unit, onEditItem: (Long) -> Unit) {
+fun GrowingAreaListScreen(
+    viewModel: GrowingAreaViewModel,
+    onAddNew: () -> Unit,
+    onEditItem: (Long) -> Unit,
+    onOpenHistory: (Long) -> Unit
+) {
     Column(modifier = Modifier.fillMaxSize().padding(20.dp)) {
         CrudScreenHeader(
             icon = Icons.Default.Yard,
@@ -47,7 +54,12 @@ fun GrowingAreaListScreen(viewModel: GrowingAreaViewModel, onAddNew: () -> Unit,
             }
             else -> LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 items(viewModel.areas, key = { it.id }) { area ->
-                    GrowingAreaCard(area = area, onEdit = { onEditItem(area.id) }, onDelete = { viewModel.delete(area.id) })
+                    GrowingAreaCard(
+                        area = area,
+                        onHistory = { onOpenHistory(area.id) },
+                        onEdit = { onEditItem(area.id) },
+                        onDelete = { viewModel.delete(area.id) }
+                    )
                 }
             }
         }
@@ -55,13 +67,13 @@ fun GrowingAreaListScreen(viewModel: GrowingAreaViewModel, onAddNew: () -> Unit,
 }
 
 @Composable
-private fun GrowingAreaCard(area: GrowingAreaResponse, onEdit: () -> Unit, onDelete: () -> Unit) {
+private fun GrowingAreaCard(area: GrowingAreaResponse, onHistory: () -> Unit, onEdit: () -> Unit, onDelete: () -> Unit) {
     Card(
         colors = CardDefaults.cardColors(containerColor = SurfaceSecondary),
         shape = RoundedCornerShape(14.dp),
         modifier = Modifier.fillMaxWidth()
     ) {
-        Row(modifier = Modifier.fillMaxWidth()) {
+        Row(modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min)) {
             Box(
                 modifier = Modifier
                     .width(4.dp)
@@ -88,10 +100,25 @@ private fun GrowingAreaCard(area: GrowingAreaResponse, onEdit: () -> Unit, onDel
                         color = GraySecondaryText, fontSize = 13.sp
                     )
                     Spacer(Modifier.height(4.dp))
-                    Text("${area.capacityM2} m² · ${if (area.irrigationAutomatic) "Irrigação automática" else "Irrigação manual"}",
-                        color = NeonPrimary, fontSize = 12.sp)
+                    Text(
+                        "${area.capacityM2} m² · ${if (area.irrigationAutomatic) "Irrigação automática" else "Irrigação manual"}",
+                        color = NeonPrimary, fontSize = 12.sp
+                    )
+                    area.deviceId?.let {
+                        Text("Dispositivo: $it", color = PurpleTech, fontSize = 12.sp)
+                    }
                 }
                 Spacer(Modifier.width(8.dp))
+                if (area.deviceId != null) {
+                    FilledTonalIconButton(
+                        onClick = onHistory,
+                        colors = IconButtonDefaults.filledTonalIconButtonColors(
+                            containerColor = PurpleTech.copy(alpha = 0.18f),
+                            contentColor = PurpleTech
+                        )
+                    ) { Icon(Icons.Default.Timeline, contentDescription = "Histórico de sensores") }
+                    Spacer(Modifier.width(6.dp))
+                }
                 FilledTonalIconButton(
                     onClick = onEdit,
                     colors = IconButtonDefaults.filledTonalIconButtonColors(
@@ -103,8 +130,8 @@ private fun GrowingAreaCard(area: GrowingAreaResponse, onEdit: () -> Unit, onDel
                 FilledTonalIconButton(
                     onClick = onDelete,
                     colors = IconButtonDefaults.filledTonalIconButtonColors(
-                        containerColor = com.cyberflora.frontend.theme.ErrorColor.copy(alpha = 0.15f),
-                        contentColor = com.cyberflora.frontend.theme.ErrorColor
+                        containerColor = ErrorColor.copy(alpha = 0.15f),
+                        contentColor = ErrorColor
                     )
                 ) { Icon(Icons.Default.Delete, contentDescription = "Apagar") }
             }

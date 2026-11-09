@@ -11,7 +11,9 @@ import androidx.navigation3.ui.NavDisplay
 import androidx.savedstate.serialization.SavedStateConfiguration
 import com.cyberflora.frontend.screens.GrowingAreaFormScreen
 import com.cyberflora.frontend.screens.GrowingAreaListScreen
+import com.cyberflora.frontend.screens.SensorHistoryScreen
 import com.cyberflora.frontend.viewmodel.GrowingAreaViewModel
+import com.cyberflora.frontend.viewmodel.SensorHistoryViewModel
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 import kotlinx.serialization.modules.subclass
@@ -21,6 +23,7 @@ private val growingAreaCrudConfig = SavedStateConfiguration {
         polymorphic(NavKey::class) {
             subclass(CrudScreen.ListScreen::class, CrudScreen.ListScreen.serializer())
             subclass(CrudScreen.FormScreen::class, CrudScreen.FormScreen.serializer())
+            subclass(CrudScreen.HistoryScreen::class, CrudScreen.HistoryScreen.serializer())
         }
     }
 }
@@ -45,13 +48,24 @@ fun GrowingAreaNavigation() {
                     onEditItem = { id ->
                         viewModel.loadForEdit(id)
                         backStack.add(CrudScreen.FormScreen(id = id))
-                    }
+                    },
+                    onOpenHistory = { id -> backStack.add(CrudScreen.HistoryScreen(id = id)) }
                 )
             }
             entry<CrudScreen.FormScreen> {
                 GrowingAreaFormScreen(
                     viewModel = viewModel,
                     onSaved = { backStack.removeAt(backStack.lastIndex) }
+                )
+            }
+            entry<CrudScreen.HistoryScreen> { key ->
+                val area = viewModel.areas.firstOrNull { it.id == key.id }
+                val historyViewModel = remember(key.id) { SensorHistoryViewModel(key.id) }
+                SensorHistoryScreen(
+                    areaName = area?.name ?: "Área",
+                    deviceId = area?.deviceId,
+                    viewModel = historyViewModel,
+                    onBack = { backStack.removeAt(backStack.lastIndex) }
                 )
             }
         }
