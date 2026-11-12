@@ -243,3 +243,23 @@ O backend assina `cyberflora/+/sensor/+` no broker MQTT (sessão persistente) e 
 - Integração (com broker e backend rodando): `powershell -ExecutionPolicy Bypass -File docs\teste-iot.ps1`
 
 **Limitações:** o MQTT trafega sem TLS (porta 1883, restrita ao `127.0.0.1`); a tabela de leituras não tem rotina de limpeza; quem descobre o `deviceId` de outra pessoa pode vinculá-lo antes dela, e um produto real exigiria provisionamento do dispositivo.
+## 14. Simulação do ESP32 no Wokwi
+
+Projeto online: https://wokwi.com/projects/480486713386253313
+
+Enquanto o hardware físico não está disponível, o ESP32 é simulado no Wokwi. O projeto está em `iot/wokwi/`: `sketch.ino` (firmware), `diagram.json` (circuito), `libraries.txt` e `secrets.h.example`.
+
+**Circuito:** ESP32, potenciômetro no GPIO34 (simula o sensor de umidade do solo; na montagem física é substituído pelo sensor capacitivo, no mesmo pino), DHT22 no GPIO15 (temperatura e umidade do ar), LED verde no GPIO2 (conectado ao broker) e LED azul no GPIO4 (bomba, liga abaixo de 40 % e desliga acima de 60 %). Imagem: `iot/wokwi/esquema-wokwi.png`.
+
+**Caminho dos dados:** Wokwi, broker público de testes, ponte (Docker), Mosquitto local, backend, aplicativo. O simulador gratuito não alcança o `localhost`, por isso ele publica em um broker público, com um prefixo aleatório nos tópicos. A **ponte** (`docker/ponte/ponte.sh`) assina só esse prefixo, valida o `deviceId`, o tipo e o tamanho, e republica as leituras no Mosquitto local com o usuário `ponte`, que só pode publicar leituras. O backend nunca se conecta ao broker público.
+
+**Como usar:**
+
+1. `powershell -ExecutionPolicy Bypass -File docs\configurar-wokwi.ps1` grava `WOKWI_*` no `.env` e gera `iot/wokwi/secrets.h` (não versionado).
+2. `cd docker` e `docker compose --profile wokwi up -d` sobem o banco, o Mosquitto e a ponte.
+3. Crie o projeto em wokwi.com com os arquivos de `iot/wokwi/` (mais o `secrets.h` gerado) e inicie a simulação.
+4. No aplicativo, informe o dispositivo `esp32-001` em uma área e abra o histórico.
+
+**Teste da ponte** (com o backend rodando): `powershell -ExecutionPolicy Bypass -File docs\teste-wokwi.ps1`. Todas as linhas devem sair em `PASS`.
+
+**Limitações:** o broker público não tem autenticação nem TLS, então só se usam dados fictícios. O prefixo reduz colisões, mas não impede quem o descobrir. O caminho é de uma via (o simulador não recebe comandos do backend). O PubSubClient publica em QoS 0.

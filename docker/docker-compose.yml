@@ -20,6 +20,20 @@ services:
       - ./mosquitto:/mosquitto/config:ro
       - cyberflora_mqtt_data:/mosquitto/data
 
+  # Ponte do Wokwi: so sobe com  docker compose --profile wokwi up -d
+  ponte:
+    image: eclipse-mosquitto:2.0.18
+    container_name: cyberflora-ponte
+    profiles: ["wokwi"]
+    restart: unless-stopped
+    env_file:
+      - ../.env
+    depends_on:
+      - mosquitto
+    entrypoint: ["sh", "/ponte.sh"]
+    volumes:
+      - ./ponte/ponte.sh:/ponte.sh:ro
+
 volumes:
   cyberflora_pg_data:
   cyberflora_mqtt_data:

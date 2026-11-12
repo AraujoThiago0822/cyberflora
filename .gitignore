@@ -36,3 +36,5 @@ run_log.txt
 docs/log-*.txt
 
 docker/mosquitto/passwd
+
+iot/wokwi/secrets.h
