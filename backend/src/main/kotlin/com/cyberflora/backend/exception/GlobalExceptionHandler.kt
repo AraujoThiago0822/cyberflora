@@ -15,6 +15,10 @@ class GlobalExceptionHandler {
     fun notFound(e: NoSuchElementException): ResponseEntity<Map<String, String>> =
         ResponseEntity.status(HttpStatus.NOT_FOUND).body(mapOf("error" to (e.message ?: "Não encontrado")))
 
+    @ExceptionHandler(BusinessRuleException::class)
+    fun businessRule(e: BusinessRuleException): ResponseEntity<Map<String, String>> =
+        ResponseEntity.badRequest().body(mapOf("error" to (e.message ?: "Regra de negócio violada")))
+
     @ExceptionHandler(MethodArgumentNotValidException::class)
     fun invalid(e: MethodArgumentNotValidException): ResponseEntity<Map<String, String>> {
         val message = e.bindingResult.fieldErrors.joinToString("; ") { it.defaultMessage ?: "Valor inválido" }

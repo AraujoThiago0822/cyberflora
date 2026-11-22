@@ -1,4 +1,5 @@
 plugins {
+    jacoco
 	kotlin("jvm") version "2.3.21"
 	kotlin("plugin.spring") version "2.3.21"
 	id("org.springframework.boot") version "4.1.1"
@@ -54,4 +55,15 @@ allOpen {
 
 tasks.withType<Test> {
 	useJUnitPlatform()
+}
+
+tasks.withType<Test> {
+    finalizedBy("jacocoTestReport")
+}
+
+tasks.withType<JacocoReport>().configureEach {
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+    }
 }
