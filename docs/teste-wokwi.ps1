@@ -1,4 +1,4 @@
-# Teste da ponte: broker publico (Wokwi) -> ponte (Docker) -> Mosquitto local -> backend -> API
+﻿# Teste da ponte: broker publico (Wokwi) -> ponte (Docker) -> Mosquitto local -> backend -> API
 $raiz = Split-Path -Parent $PSScriptRoot
 $envFile = Join-Path $raiz ".env"
 function Valor($n) { $l = Get-Content $envFile | Where-Object { $_ -like "$n=*" } | Select-Object -First 1; if (-not $l) { throw "Variavel $n ausente no .env. Rode docs\configurar-wokwi.ps1" }; $l.Substring($n.Length + 1).Trim() }
@@ -10,7 +10,9 @@ function Qtd($r) { if ($null -eq $r) { 0 } else { @($r).Count } }
 function Check($n, $ok) { if ($ok) { Write-Host "PASS  $n" -ForegroundColor Green } else { Write-Host "FAIL  $n" -ForegroundColor Red } }
 function PubPublico($pref, $tipo, $msg) { $msg | docker run --rm -i $img mosquitto_pub -h $broker -p $porta -t "$pref/$dev/sensor/$tipo" -s 2>&1 | Out-Null }
 
-Check "ponte esta rodando" ((docker ps --filter "name=cyberflora-ponte" --format "{{.Names}}") -eq "cyberflora-ponte")
+$estado = docker inspect -f "{{.State.Running}} {{.State.Restarting}}" cyberflora-ponte 2>$null
+Check "ponte esta rodando (sem reiniciar em loop)" ($estado -eq "true false")
+if ($estado -ne "true false") { Write-Host "Log da ponte:" -ForegroundColor Yellow; docker logs cyberflora-ponte --tail 8 2>&1; Write-Host "Rode: powershell -ExecutionPolicy Bypass -File docs\corrigir-ponte.ps1" -ForegroundColor Yellow; return }
 
 $reg = Invoke-RestMethod -Uri "$api/signup" -Method Post -ContentType $j -Body (@{ name = "ana"; email = "ana$s@teste.com"; password = "Senha@123"; confirmPassword = "Senha@123" } | ConvertTo-Json)
 $ha = @{ Authorization = "Bearer $($reg.token)" }

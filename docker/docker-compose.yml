@@ -30,7 +30,7 @@ services:
       - ../.env
     depends_on:
       - mosquitto
-    entrypoint: ["sh", "/ponte.sh"]
+    entrypoint: ["sh", "-c", "tr -d '\\r' < /ponte.sh > /tmp/ponte.sh && sh /tmp/ponte.sh"]
     volumes:
       - ./ponte/ponte.sh:/ponte.sh:ro
 

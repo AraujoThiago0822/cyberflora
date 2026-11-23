@@ -263,3 +263,14 @@ Enquanto o hardware físico não está disponível, o ESP32 é simulado no Wokwi
 **Teste da ponte** (com o backend rodando): `powershell -ExecutionPolicy Bypass -File docs\teste-wokwi.ps1`. Todas as linhas devem sair em `PASS`.
 
 **Limitações:** o broker público não tem autenticação nem TLS, então só se usam dados fictícios. O prefixo reduz colisões, mas não impede quem o descobrir. O caminho é de uma via (o simulador não recebe comandos do backend). O PubSubClient publica em QoS 0.
+## 15. Início rápido com o Wokwi integrado
+
+Com o Docker Desktop aberto, um comando prepara e sobe o banco, o Mosquitto e a ponte do Wokwi (e o backend, com `-Backend`):
+
+```powershell
+powershell -ExecutionPolicy Bypass -File docs\iniciar-ambiente.ps1 -Backend
+```
+
+Depois, abra o projeto do simulador no wokwi.com (arquivos em `iot/wokwi/`), confirme que o `MQTT_PREFIXO` do `secrets.h` é igual ao prefixo impresso pelo script e clique em Start. As leituras aparecem no histórico da área (dispositivo `esp32-001`) do aplicativo.
+
+O arquivo `.gitattributes` mantém o fim de linha LF nos scripts do Docker, evitando falhas em máquinas Windows.

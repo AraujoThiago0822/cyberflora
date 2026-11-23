@@ -1,8 +1,12 @@
 #!/bin/sh
 # Ponte: repassa leituras do broker publico (Wokwi) para o Mosquitto local.
 # Usa a identidade "ponte" (ACL: so publica leituras). Valida deviceId, tipo e tamanho.
-set -u
-: "${WOKWI_BROKER:?}" "${WOKWI_PORT:?}" "${WOKWI_PREFIX:?}" "${MQTT_PONTE_PASSWORD:?}"
+for v in WOKWI_BROKER WOKWI_PORT WOKWI_PREFIX MQTT_PONTE_PASSWORD; do
+  eval "val=\${$v:-}"
+  if [ -z "$val" ]; then echo "[ponte] ERRO: variavel $v ausente no .env (rode docs/configurar-wokwi.ps1)"; sleep 30; exit 1; fi
+done
+WOKWI_BROKER=$(printf '%s' "$WOKWI_BROKER" | tr -d '\r'); WOKWI_PORT=$(printf '%s' "$WOKWI_PORT" | tr -d '\r')
+WOKWI_PREFIX=$(printf '%s' "$WOKWI_PREFIX" | tr -d '\r'); MQTT_PONTE_PASSWORD=$(printf '%s' "$MQTT_PONTE_PASSWORD" | tr -d '\r')
 LOCAL_HOST="${LOCAL_HOST:-mosquitto}"
 echo "[ponte] escutando ${WOKWI_BROKER}:${WOKWI_PORT} em ${WOKWI_PREFIX}/+/sensor/+"
 while true; do
